@@ -1,0 +1,55 @@
+The script below is the code used to update the google forms which contain links to the open tickets
+
+
+
+ function trigger_UpdateDashboard()
+ {
+   ScriptApp.newTrigger('populateGoogleForms')
+   .forSpreadsheet('SpreadsheetID')
+   .timeBased()
+   .everyHours(2)
+   .create();
+ }
+
+//use .onEdit if you want trigger a function every time there is some change in the documents.
+
+function populateGoogleForms() {
+  const GOOGLE_SHEET_NAME = "Open Tickets";
+  const GOOGLE_FORM_ID = "Google Form ID";
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  const [header, ...data] = ss
+    .getSheetByName(GOOGLE_SHEET_NAME)
+    .getDataRange()
+    .getDisplayValues();
+
+  const choices = {};
+  header.forEach((title, i) => {
+    choices[title] = data.map((d) => d[i]).filter((e) => e);
+  });
+
+  FormApp.openById(GOOGLE_FORM_ID)
+    .getItems()
+    .map((item) => ({
+      item,
+      values: choices[item.getTitle()],
+    }))
+    .filter(({ values }) => values)
+    .forEach(({ item, values }) => {
+      switch (item.getType()) {
+        
+        case FormApp.ItemType.LIST:
+          item.asListItem.setChoiceValues(values);
+          break;
+
+        case FormApp.ItemType.MULTIPLE_CHOICE:
+          item.asMultipleChoiceItem().setChoiceValues(values);
+          break;
+                
+        default:
+        // ignore
+      }
+    });
+  ss.toast("Google Form Updated !!");
+};
