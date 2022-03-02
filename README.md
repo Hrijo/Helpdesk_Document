@@ -2,6 +2,4 @@
 
 Process flow for helpdesk: 
 
-![image](https://user-images.githubusercontent.com/85121157/156416962-f921de43-6651-4a6b-adbe-359fa592a4ed.png)
-
-
+![image](https://user-images.githubusercontent.com/85121157/156417752-f1aa4b22-187a-4a12-a10e-001b94c973a9.png)
